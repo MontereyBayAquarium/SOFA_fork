@@ -158,7 +158,7 @@ forage_join <- for_dat_build1 %>%
   #filter(steal == "No")%>% 
  #select variables of interest
   dplyr::select(foragdiv_id, foragdata_id, preynum, prey, number,
-                size, qualifier, ht)%>%
+                size, qualifier, ht, stolenfr_number, pupshare_number)%>%
   mutate_if(is.character, str_trim)
 
 dive_join <- dive_build1 %>%
