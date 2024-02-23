@@ -16,14 +16,14 @@ datout <- "/Volumes/seaotterdb$/kelp_recovery/data/foraging_data/processed"
 figdir <- here::here("analyses","figures")
 
 #get foraging data
-for_dat_c <- read_xlsx(file.path(datin, "Forage_data_2016tocurrent.xlsx"))
-for_dat_o <- read_xlsx(file.path(datin, "Forage_data_97to16.xlsx"))
+for_dat_c <- read_csv(file.path(datin, "Forage_data_2016tocurrent.csv"))
+for_dat_o <- read_csv(file.path(datin, "Forage_data_97to16.csv"))
 
-dives_c <- read_xlsx(file.path(datin, "Forage_dives_2016tocurrent.xlsx"))
-dives_o <- read_xlsx(file.path(datin, "Forage_dives_97to16.xlsx"))
+dives_c <- read_csv(file.path(datin, "Forage_dives_2016tocurrent.csv"))
+dives_o <- read_csv(file.path(datin, "Forage_dives_97to16.csv"))
 
-index_c <- read_xlsx(file.path(datin, "Forage_indexi_2016tocurrent.xlsx"))
-index_o <- read_xlsx(file.path(datin, "Forage_index_97to16.xlsx"))
+index_c <- read_csv(file.path(datin, "Forage_index_2016tocurrent.csv"))
+index_o <- read_csv(file.path(datin, "Forage_index_97to16.csv"))
 
 ################################################################################
 #explore data
@@ -162,7 +162,9 @@ forage_join <- for_dat_build1 %>%
   mutate_if(is.character, str_trim)
 
 dive_join <- dive_build1 %>%
-  dplyr::select(foragdiv_id, bout, subbout, lat, long, canopy,
+  dplyr::select(foragdiv_id, bout, subbout, lat, long, 
+                utm_ew, utm_ns, utm_zone, utm_datum,
+                canopy,
                 st,where,
                 kelptype, divenum, dt, success) %>%
   mutate_if(is.character, str_trim) 
@@ -187,9 +189,10 @@ anti_build2 <- anti_join(data_build1, index_join, by="bout")
 #process data build
 
 data_build3 <- data_build2 %>%
-  mutate(year = as.numeric(format(date,'%Y')),
-         month = as.numeric(format(date,'%m')),
-         day = as.numeric(format(date,'%d')))%>%
+  mutate(date = dmy(date), 
+         year = year(date),  
+         month = month(date),  
+         day = day(date))%>%
   dplyr::select(year, month, day, date, foragdiv_id, foragdata_id, bout, subbout,
                 lat, long, otterno, everything()
   ) 
